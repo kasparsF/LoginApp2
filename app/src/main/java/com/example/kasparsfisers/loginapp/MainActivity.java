@@ -1,5 +1,6 @@
 package com.example.kasparsfisers.loginapp;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
@@ -8,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
+
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,6 +21,8 @@ EditText logUser, logPass;
     Button login,register;
     ImageView imgLoading;
     FragmentManager fm = getSupportFragmentManager();
+
+    ObjectAnimator a = new ObjectAnimator();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +49,7 @@ EditText logUser, logPass;
             register.setVisibility(View.GONE);
             logUser.setVisibility(View.GONE);
             logPass.setVisibility(View.GONE);
-            Handler handler = new Handler();
+            Handler handler = new Handler(getMainLooper());
             handler.postDelayed(new Runnable(){
                 public void run() {
 
