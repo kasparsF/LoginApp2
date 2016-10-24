@@ -47,9 +47,9 @@ public class AlertDFragment extends DialogFragment {
                 if(validation(newUser,newEmail,newName,newPass,newPass2)) {
                      preferences = getActivity().getSharedPreferences(getString(R.string.preffs), MODE_PRIVATE);
                     SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString(newUser + newPass + "data", newUser + "\n" + newEmail);
-                    editor.putString(newUser + newPass + "info", newName);
-                    editor.commit();
+                    editor.putString(newUser + newPass + getString(R.string.userData), newUser + "\n" + newEmail);
+                    editor.putString(newUser + newPass + getString(R.string.userInfo), newName);
+                    editor.apply();
                     Toast.makeText(getActivity(), R.string.registered, Toast.LENGTH_SHORT).show();
                     dismiss();
 
@@ -68,26 +68,26 @@ public class AlertDFragment extends DialogFragment {
 
         if(newUser.isEmpty() || newUser.length()>32){
             valid = false;
-            username.setError("Please Enter valid Username!");
+            username.setError(getString(R.string.validUsername));
         }
 
         if(newName.isEmpty()){
             valid = false;
-            name.setError("Please Enter name!");
+            name.setError(getString(R.string.validName));
         }
 
         if(newEmail.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(newEmail).matches()){
             valid = false;
-            email.setError("Please Enter valid Email Address!!");
+            email.setError(getString(R.string.validEmail));
         }
 
         if(!Functions.isValidPassword(newPass)){
             valid = false;
-            password.setError("Password needs to contain: number, symbol, capital letter and min lenght of 8!!");
+            password.setError(getString(R.string.validPass));
         }
         if(!newPass2.equals(newPass)){
             valid = false;
-            password2.setError("Passwords dont match!!");
+            password2.setError(getString(R.string.matchPass));
         }
         return valid;
     }

@@ -9,4 +9,11 @@
     <string name="start">Start Tracking</string>
     <string name="serviceStart">Service Started</string>
     <string name="serviceStop">Service Stopped</string>
+    <string name="userData">data</string>
+    <string name="userInfo">info</string>
+    <string name="validUsername">Please Enter valid Username!</string>
+    <string name="validName">Please Enter name!</string>
+    <string name="validEmail">Please Enter valid Email Address!!</string>
+    <string name="validPass">Password needs to contain: number, symbol, capital letter and min lenght of 8!!</string>
+    <string name="matchPass">Passwords dont match!!</string>
 </resources>

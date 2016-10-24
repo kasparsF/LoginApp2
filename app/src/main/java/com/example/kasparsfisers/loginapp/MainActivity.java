@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     String pass = logPass.getText().toString();
 
                     SharedPreferences preferences = getSharedPreferences(getString(R.string.preffs), MODE_PRIVATE);
-                    String userDetails = preferences.getString(user + pass + "info", "");
+                    String userDetails = preferences.getString(user + pass + getString(R.string.userInfo), "");
                     if (userDetails.equals("")) {
                         Toast.makeText(MainActivity.this, R.string.denied, Toast.LENGTH_SHORT).show();
                         login.setVisibility(View.VISIBLE);
