@@ -3,11 +3,9 @@ package com.example.kasparsfisers.loginapp;
 import android.app.Service;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.*;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
@@ -19,19 +17,20 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
-/**
- * Created by kaspars.fisers on 10/24/2016.
- */
 
 public class LocationService extends Service implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
+    private static LocationService instance = null;
 
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
 
     private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
 
+    public static boolean isInstanceCreated() {
+        return instance != null;
+    }
 
     @Nullable
     @Override
@@ -41,7 +40,8 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
+        instance = this;
+        Toast.makeText(this, R.string.serviceStart, Toast.LENGTH_SHORT).show();
 
         // Create the location client to start receiving updates
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -57,7 +57,7 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
 
     @Override
     public void onDestroy() {
-        Toast.makeText(this, "Service Stoped", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.serviceStop, Toast.LENGTH_SHORT).show();
 
         // Disconnecting the client invalidates it.
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
@@ -67,7 +67,7 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
             mGoogleApiClient.disconnect();
         }
 
-
+        instance = null;
         super.onDestroy();
     }
 
@@ -111,7 +111,7 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
 
     @Override
     public void onConnectionFailed(ConnectionResult result) {
-        Log.i("Activity","Connection failed: ConnectionResult.getErrorCode() = "
+        Log.i("Activity","error:"
                 + result.getErrorCode());
     }
 
@@ -119,8 +119,8 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     public void onLocationChanged(Location location) {
         // New location has now been determined
         String msg = "Updated Location: " +
-                Double.toString(location.getLatitude()) + "," +
-                Double.toString(location.getLongitude()) + "," +
+                Double.toString(location.getLatitude()) + ", " +
+                Double.toString(location.getLongitude()) + ", " +
                 Double.toString(location.getAccuracy());
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }

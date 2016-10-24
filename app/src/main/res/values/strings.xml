@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">LoginApp</string>
+    <string name="displayInfo">display</string>
+    <string name="denied">Wrong data provided</string>
+    <string name="preffs">MYPREFS</string>
+    <string name="registered">Successfuly registered!</string>
+    <string name="registerError">Something went wrong!</string>
+    <string name="stop">Stop Tracking</string>
+    <string name="start">Start Tracking</string>
+    <string name="serviceStart">Service Started</string>
+    <string name="serviceStop">Service Stopped</string>
 </resources>

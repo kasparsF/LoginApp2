@@ -45,16 +45,16 @@ public class AlertDFragment extends DialogFragment {
                 newPass2 = password2.getText().toString();
 
                 if(validation(newUser,newEmail,newName,newPass,newPass2)) {
-                     preferences = getActivity().getSharedPreferences("MYPREFS", MODE_PRIVATE);
+                     preferences = getActivity().getSharedPreferences(getString(R.string.preffs), MODE_PRIVATE);
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putString(newUser + newPass + "data", newUser + "\n" + newEmail);
                     editor.putString(newUser + newPass + "info", newName);
                     editor.commit();
-                    Toast.makeText(getActivity(), "Successfuly registered!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.registered, Toast.LENGTH_SHORT).show();
                     dismiss();
 
                 }else{
-                    Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.registerError, Toast.LENGTH_SHORT).show();
                 }
             }
         });

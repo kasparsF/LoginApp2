@@ -1,6 +1,5 @@
 package com.example.kasparsfisers.loginapp;
 
-import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
@@ -20,10 +19,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     EditText logUser, logPass;
     Button login, register, location;
     ImageView imgLoading;
-    int m = 0;
+
     FragmentManager fm = getSupportFragmentManager();
 
-    ObjectAnimator a = new ObjectAnimator();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         logPass = (EditText) findViewById(R.id.loginPass);
         login = (Button) findViewById(R.id.btnLogin);
         register = (Button) findViewById(R.id.btnLoginReg);
-        location = (Button) findViewById(R.id.btnLocation);
+        location = (Button) findViewById(R.id.btnLoc);
         login.setOnClickListener(this);
         register.setOnClickListener(this);
         location.setOnClickListener(this);
@@ -60,10 +59,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     String user = logUser.getText().toString();
                     String pass = logPass.getText().toString();
 
-                    SharedPreferences preferences = getSharedPreferences("MYPREFS", MODE_PRIVATE);
+                    SharedPreferences preferences = getSharedPreferences(getString(R.string.preffs), MODE_PRIVATE);
                     String userDetails = preferences.getString(user + pass + "info", "");
                     if (userDetails.equals("")) {
-                        Toast.makeText(MainActivity.this, "Wrong data provided", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, R.string.denied, Toast.LENGTH_SHORT).show();
                         login.setVisibility(View.VISIBLE);
                         register.setVisibility(View.VISIBLE);
                         logUser.setVisibility(View.VISIBLE);
@@ -72,8 +71,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     } else {
 
                         SharedPreferences.Editor editor = preferences.edit();
-                        editor.putString("display", userDetails);
-                        editor.commit();
+                        editor.putString(getString(R.string.displayInfo), userDetails);
+                        editor.apply();
                         Intent toLogin = new Intent(MainActivity.this, Display.class);
                         startActivity(toLogin);
                         login.setVisibility(View.VISIBLE);
@@ -91,19 +90,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (v.getId() == R.id.btnLoginReg) {
             AlertDFragment alertdFragment = new AlertDFragment();
             // Show Alert DialogFragment
-            alertdFragment.show(fm, "Alert Dialog Fragment");
+            alertdFragment.show(fm, "");
+
 
         }
 
-        if (v.getId() == R.id.btnLocation) {
-            if (m == 0) {
+        if (v.getId() == R.id.btnLoc) {
+
+            if(!LocationService.isInstanceCreated()){
+
                 startService(new Intent(getBaseContext(), LocationService.class));
-                m = 1;
+                location.setText(R.string.stop);
+
             } else {
                 stopService(new Intent(getBaseContext(), LocationService.class));
-                m = 0;
+                location.setText(R.string.start);
             }
-
 
         }
     }

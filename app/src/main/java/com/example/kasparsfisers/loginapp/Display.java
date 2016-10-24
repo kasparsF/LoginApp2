@@ -13,8 +13,8 @@ public class Display extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.display);
         greetings = (TextView)findViewById(R.id.intro);
-        SharedPreferences preferences = getSharedPreferences("MYPREFS", MODE_PRIVATE);
-        String display = preferences.getString("display", "");
+        SharedPreferences preferences = getSharedPreferences(getString(R.string.preffs), MODE_PRIVATE);
+        String display = preferences.getString(getString(R.string.displayInfo), "");
         greetings.setText(display);
 
 
