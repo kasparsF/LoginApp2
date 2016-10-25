@@ -1,14 +1,16 @@
 package com.example.kasparsfisers.loginapp;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
-
+import com.example.kasparsfisers.loginapp.LocationContract.LocationEntry;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button login, register, location;
     ImageView imgLoading;
 
+
     FragmentManager fm = getSupportFragmentManager();
 
 
@@ -28,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         logUser = (EditText) findViewById(R.id.loginUser);
         logPass = (EditText) findViewById(R.id.loginPass);
         login = (Button) findViewById(R.id.btnLogin);
@@ -116,4 +120,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     }
+
+
+
 }

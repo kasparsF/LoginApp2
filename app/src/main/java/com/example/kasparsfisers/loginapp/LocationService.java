@@ -1,8 +1,10 @@
 package com.example.kasparsfisers.loginapp;
 
 import android.app.Service;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -21,7 +23,6 @@ import com.google.android.gms.location.LocationServices;
 
 public class LocationService extends Service implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
-
     private static LocationService instance = null;
 
     private GoogleApiClient mGoogleApiClient;
@@ -33,6 +34,8 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
         return instance != null;
     }
 
+    private LocationDbHelper mDbHelper;
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -43,6 +46,8 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     public int onStartCommand(Intent intent, int flags, int startId) {
         instance = this;
         Toast.makeText(this, R.string.serviceStart, Toast.LENGTH_SHORT).show();
+
+        mDbHelper = new LocationDbHelper(this);
 
         // Create the location client to start receiving updates
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -123,6 +128,21 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
                 Double.toString(location.getLatitude()) + ", " +
                 Double.toString(location.getLongitude()) + ", " +
                 Double.toString(location.getAccuracy());
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+
+        insertCoordinates(location.getLatitude(),location.getLongitude(),location.getAccuracy());
+        Toast.makeText(this, "Inserted!", Toast.LENGTH_SHORT).show();
+
+    }
+
+
+    private void insertCoordinates(double lat, double lon, double acc) {
+
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(LocationContract.LocationEntry.COLUMN_LATITUDE, lat);
+        values.put(LocationContract.LocationEntry.COLUMN_LONGITUDE,lon);
+        values.put(LocationContract.LocationEntry.COLUMN_ACCURACY, acc);
+        db.insert(LocationContract.LocationEntry.TABLE_NAME, null, values);
+
     }
 }
