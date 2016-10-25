@@ -124,13 +124,13 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     @Override
     public void onLocationChanged(Location location) {
         // New location has now been determined
-        String msg = "Updated Location: " +
+        String msg = "Inserted: " +
                 Double.toString(location.getLatitude()) + ", " +
                 Double.toString(location.getLongitude()) + ", " +
                 Double.toString(location.getAccuracy());
 
         insertCoordinates(location.getLatitude(),location.getLongitude(),location.getAccuracy());
-        Toast.makeText(this, "Inserted!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
 
     }
 
