@@ -38,6 +38,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         location.setOnClickListener(this);
         imgLoading = (ImageView) findViewById(R.id.imageRotate);
 
+        if(LocationService.isInstanceCreated()){
+            location.setText(R.string.stop);
+        } else {
+            location.setText(R.string.start);
+        }
+
+
     }
 
     @Override
