@@ -8,7 +8,7 @@ import android.content.SharedPreferences;
 
 public class SharedPreferencewsUtils {
 
-    private static  SharedPreferencewsUtils instance;
+    private static volatile   SharedPreferencewsUtils instance;
 
     private SharedPreferencewsUtils(){}
 

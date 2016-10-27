@@ -7,6 +7,7 @@ import android.location.Geocoder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -35,13 +36,13 @@ public class Functions {
     }
 
     public static void getAddressFromLocation(
-            final double lat, final double lon, final Context context, final Handler handler) {
+            final double lat, final double lon, final double acc, final Context context, final Handler handler) {
         Thread thread = new Thread() {
             @Override public void run() {
                 Geocoder geocoder = new Geocoder(context, Locale.getDefault());
                 String result = null;
                 String psCode;
-                String addLine;
+                String addLine ="null";
                 String locality;
                 String country;
                 try {
@@ -70,6 +71,10 @@ public class Functions {
                 } catch (IOException e) {
                     Log.e("Error", "Impossible to connect to Geocoder", e);
                 } finally {
+
+                    LocationDbHelper.insertCoordinates(context, lat, lon, acc, result);
+
+
                     Message msg = Message.obtain();
                     msg.setTarget(handler);
                     if (result != null) {
@@ -85,47 +90,5 @@ public class Functions {
         };
         thread.start();
     }
-
-//    public static String getLocationName(Geocoder geocoder, double lat, double lon) {
-//        List<Address> listOfAddress = null;
-//        String placeName = "";
-//        String psCode;
-//        String addLine;
-//        String locality;
-//        String country;
-//        try {
-//            listOfAddress = geocoder.getFromLocation(lat, lon, 1);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//
-//        if (listOfAddress != null && !listOfAddress.isEmpty()) {
-//            Address address = listOfAddress.get(0);
-//            addLine = address.getAddressLine(0);
-//            locality = address.getLocality();
-//            country = address.getCountryName();
-//            psCode = address.getPostalCode();
-//            if (addLine == null)
-//                addLine = "";
-//            if (locality == null)
-//                locality = "";
-//            if (country == null)
-//                country = "";
-//            if (psCode == null)
-//                psCode = "";
-//
-//            placeName = addLine;
-//            placeName += ", " + locality;
-//            placeName += ", " + country;
-//            placeName += ", " + psCode;
-//        }
-//
-//        return placeName;
-//
-//    }
-
-
-
 
 }

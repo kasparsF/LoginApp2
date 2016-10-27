@@ -1,11 +1,8 @@
 package com.example.kasparsfisers.loginapp;
 
 import android.app.Service;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
-import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
@@ -38,7 +35,7 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
         return instance != null;
     }
 
-    private LocationDbHelper mDbHelper;
+
     Geocoder gcd = null;
     double lat,lon,acc;
 
@@ -54,7 +51,7 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
         Toast.makeText(this, R.string.serviceStart, Toast.LENGTH_SHORT).show();
 
 
-        mDbHelper = new LocationDbHelper(this);
+
 
         // Create the location client to start receiving updates
         if (mGoogleApiClient == null) {
@@ -142,10 +139,10 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
                 Double.toString(lon) + ", " +
                 Double.toString(acc);
 
-        insertCoordinates(lat, lon, acc);
+     //   LocationDbHelper.insertCoordinates(this,lat, lon, acc);
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 
-        Functions.getAddressFromLocation(lat,lon, this, new GeocoderHandler());
+        Functions.getAddressFromLocation(lat,lon, acc, this, new GeocoderHandler());
 
 
 //        if (gcd == null){
@@ -154,18 +151,6 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
      //   Toast.makeText(this, Functions.getLocationName(gcd,lat,lon), Toast.LENGTH_LONG).show();
 
     }
-
-    private void insertCoordinates(double lat, double lon, double acc) {
-
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(LocationContract.LocationEntry.COLUMN_LATITUDE, lat);
-        values.put(LocationContract.LocationEntry.COLUMN_LONGITUDE,lon);
-        values.put(LocationContract.LocationEntry.COLUMN_ACCURACY, acc);
-        db.insert(LocationContract.LocationEntry.TABLE_NAME, null, values);
-
-    }
-
 
     private class GeocoderHandler extends Handler {
         @Override
