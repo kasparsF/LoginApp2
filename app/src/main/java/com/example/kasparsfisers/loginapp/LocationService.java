@@ -139,16 +139,10 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
                 Double.toString(lon) + ", " +
                 Double.toString(acc);
 
-     //   LocationDbHelper.insertCoordinates(this,lat, lon, acc);
+
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 
         Functions.getAddressFromLocation(lat,lon, acc, this, new GeocoderHandler());
-
-
-//        if (gcd == null){
-//             gcd = new Geocoder(this,Locale.getDefault());
-//        }
-     //   Toast.makeText(this, Functions.getLocationName(gcd,lat,lon), Toast.LENGTH_LONG).show();
 
     }
 
