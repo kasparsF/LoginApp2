@@ -5,9 +5,13 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -35,6 +39,8 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     }
 
     private LocationDbHelper mDbHelper;
+    Geocoder gcd = null;
+    double lat,lon,acc;
 
     @Nullable
     @Override
@@ -47,14 +53,16 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
         instance = this;
         Toast.makeText(this, R.string.serviceStart, Toast.LENGTH_SHORT).show();
 
+
         mDbHelper = new LocationDbHelper(this);
 
         // Create the location client to start receiving updates
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this).build();
-
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(LocationServices.API)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this).build();
+        }
 
         mGoogleApiClient.connect();
         return START_STICKY;
@@ -68,7 +76,7 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
         // Disconnecting the client invalidates it.
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 
-        // only stop if it's connected, otherwise we crash
+        // only stop if it's connected
         if (mGoogleApiClient != null) {
             mGoogleApiClient.disconnect();
         }
@@ -80,12 +88,13 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         // Get last known recent location.
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             return;
         }
         android.location.Location mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        // Note that this can be NULL if last location isn't already known.
+
         if (mCurrentLocation != null) {
             // Print current location if not null
             Log.d("DEBUG", "current location: " + mCurrentLocation.toString());
@@ -101,7 +110,8 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(UPDATE_INTERVAL);
         // Request location updates
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             return;
         }
@@ -123,17 +133,27 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
 
     @Override
     public void onLocationChanged(Location location) {
+         lat= location.getLatitude();
+         lon= location.getLongitude();
+         acc= location.getAccuracy();
         // New location has now been determined
         String msg = "Inserted: " +
-                Double.toString(location.getLatitude()) + ", " +
-                Double.toString(location.getLongitude()) + ", " +
-                Double.toString(location.getAccuracy());
+                Double.toString(lat) + ", " +
+                Double.toString(lon) + ", " +
+                Double.toString(acc);
 
-        insertCoordinates(location.getLatitude(),location.getLongitude(),location.getAccuracy());
+        insertCoordinates(lat, lon, acc);
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 
-    }
+        Functions.getAddressFromLocation(lat,lon, this, new GeocoderHandler());
 
+
+//        if (gcd == null){
+//             gcd = new Geocoder(this,Locale.getDefault());
+//        }
+     //   Toast.makeText(this, Functions.getLocationName(gcd,lat,lon), Toast.LENGTH_LONG).show();
+
+    }
 
     private void insertCoordinates(double lat, double lon, double acc) {
 
@@ -144,5 +164,23 @@ public class LocationService extends Service implements GoogleApiClient.Connecti
         values.put(LocationContract.LocationEntry.COLUMN_ACCURACY, acc);
         db.insert(LocationContract.LocationEntry.TABLE_NAME, null, values);
 
+    }
+
+
+    private class GeocoderHandler extends Handler {
+        @Override
+        public void handleMessage(Message message) {
+            String result;
+            switch (message.what) {
+                case 1:
+                    Bundle bundle = message.getData();
+                    result = bundle.getString("address");
+                    break;
+                default:
+                    result = null;
+            }
+
+            Toast.makeText(LocationService.this, result, Toast.LENGTH_SHORT).show();
+        }
     }
 }
